@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Insights | 探索人工智能的前沿技术与开源生态</title>
+    <meta name="description" content="深入探索AI前沿技术、开源项目和智能工具。从LLM到AI Agent，从代码助手到创意工具，打造你的AI工具箱。">
+    <meta name="keywords" content="AI人工智能, LLM大语言模型, AI Agent, 开源AI项目, AI工具, ChatGPT, Claude, Cursor, 代码助手, 人工智能教程">
+    <meta name="author" content="Lucas">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://aiinsights.example.com/">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://aiinsights.example.com/">
+    <meta property="og:title" content="AI Insights | 探索人工智能的前沿技术与开源生态">
+    <meta property="og:description" content="深入探索AI前沿技术、开源项目和智能工具。从LLM到AI Agent，打造你的AI工具箱。">
+    <meta property="og:image" content="https://aiinsights.example.com/og-image.png">
+    <meta property="og:locale" content="zh_CN">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://aiinsights.example.com/">
+    <meta name="twitter:title" content="AI Insights | 探索人工智能的前沿技术与开源生态">
+    <meta name="twitter:description" content="深入探索AI前沿技术、开源项目和智能工具。从LLM到AI Agent，打造你的AI工具箱。">
+    <meta name="twitter:image" content="https://aiinsights.example.com/og-image.png">
+    <meta name="twitter:creator" content="@Lucas9693265618">
+    
+    <!-- RSS Feed -->
+    <link rel="alternate" type="application/rss+xml" title="AI Insights RSS Feed" href="/rss.xml">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap" rel="stylesheet">
+    <!-- 引入 Lucide 图标库 -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'General Sans', sans-serif;
+            background-color: #050505;
+            margin: 0;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* 渐变标题效果 */
+        .gradient-heading {
+            background: linear-gradient(144.5deg, #FFFFFF 28%, rgba(255, 255, 255, 0.3) 115%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 按钮样式 */
+        .btn-layered {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            border: 0.6px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+            cursor: pointer;
+        }
+
+        .btn-inner {
+            border-radius: 9999px;
+            padding: 11px 29px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .light-streak {
+            position: absolute;
+            top: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            height: 4px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 70%);
+            filter: blur(2px);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .btn-layered:hover {
+            transform: translateY(-2px);
+            border-color: #ffffff;
+            box-shadow: 0 10px 25px -10px rgba(255, 255, 255, 0.4);
+        }
+
+        /* 桌面端：显示视频，隐藏移动端背景 */
+        @media (min-width: 769px) {
+            .video-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -10;
+                overflow: hidden;
+            }
+            .video-container video {
+                object-fit: cover;
+                width: 100%;
+                height: 100%;
+                filter: brightness(0.8) contrast(1.1);
+            }
+            .mobile-anim-bg,
+            .mobile-particles {
+                display: none !important;
+            }
+        }
+
+        /* 移动端：显示动画渐变背景和粒子，隐藏视频 */
+        @media (max-width: 768px) {
+            .video-container {
+                display: none !important;
+            }
+            .mobile-anim-bg {
+                display: block !important;
+            }
+            .mobile-particles {
+                display: block !important;
+            }
+        }
+
+        /* 动画渐变背景（手机端替代视频） */
+        .mobile-anim-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -10;
+            background: radial-gradient(ellipse at 20% 0%, #1a1a4e 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 100%, #0d2040 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 50%, #0a0d25 0%, #05050f 100%);
+            background-size: 100% 100%;
+            overflow: hidden;
+        }
+        .mobile-anim-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%, rgba(88, 166, 255, 0.12) 0%, transparent 40%),
+                        radial-gradient(circle at 70% 70%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
+                        radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.06) 0%, transparent 35%);
+            animation: mobileOrbFloat 20s ease-in-out infinite;
+        }
+        .mobile-anim-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 60%);
+        }
+        @keyframes mobileOrbFloat {
+            0%   { transform: translate(0, 0) rotate(0deg); }
+            33%  { transform: translate(3%, 2%) rotate(2deg); }
+            66%  { transform: translate(-2%, 4%) rotate(-1deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* 移动端光点粒子 */
+        .mobile-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -9;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .mobile-particles span {
+            position: absolute;
+            display: block;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: particleDrift 8s linear infinite;
+        }
+        .mobile-particles span:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; animation-duration: 12s; }
+        .mobile-particles span:nth-child(2) { left: 80%; top: 60%; animation-delay: 2s; animation-duration: 15s; width: 3px; height: 3px; opacity: 0.5; }
+        .mobile-particles span:nth-child(3) { left: 30%; top: 80%; animation-delay: 4s; animation-duration: 10s; }
+        .mobile-particles span:nth-child(4) { left: 60%; top: 10%; animation-delay: 1s; animation-duration: 18s; width: 1px; height: 1px; }
+        .mobile-particles span:nth-child(5) { left: 90%; top: 40%; animation-delay: 3s; animation-duration: 14s; }
+        .mobile-particles span:nth-child(6) { left: 45%; top: 55%; animation-delay: 5s; animation-duration: 11s; width: 3px; height: 3px; opacity: 0.4; }
+        .mobile-particles span:nth-child(7) { left: 15%; top: 70%; animation-delay: 7s; animation-duration: 16s; }
+        .mobile-particles span:nth-child(8) { left: 70%; top: 85%; animation-delay: 0.5s; animation-duration: 13s; width: 1px; height: 1px; }
+        @keyframes particleDrift {
+            0%   { opacity: 0; transform: translateY(0) scale(1); }
+            10%  { opacity: 1; }
+            90%  { opacity: 0.5; }
+            100% { opacity: 0; transform: translateY(-80px) scale(0.5); }
+        }
+
+
+        /* 无限滚动 */
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .scroll-container {
+            display: flex;
+            width: max-content;
+            animation: scroll 30s linear infinite;
+        }
+
+        .tech-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            padding: 2.5rem 1.5rem;
+            border-radius: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.2rem;
+            width: 200px;
+            margin: 0 1rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .tech-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-15px) scale(1.05);
+        }
+
+        /* Bento Grid 样式 */
+        .bento-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 32px;
+            padding: 24px;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+        }
+        .bento-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.01);
+        }
+        .agent-image-wrapper {
+            position: relative;
+            border-radius: 28px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+            background: rgba(255,255,255,0.02);
+            margin-bottom: 1.25rem;
+            min-height: 220px;
+        }
+        .bento-card.md\:col-span-2 .agent-image-wrapper {
+            min-height: 420px;
+        }
+        .bento-card.md\:col-span-2.md\:row-span-1 .agent-image-wrapper {
+            min-height: 180px;
+        }
+        .agent-image-wrapper img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            object-position: top;
+            display: block;
+            transition: transform 0.5s ease, filter 0.4s ease;
+        }
+        .bento-card.md\:col-span-2 .agent-image-wrapper img {
+            height: 420px;
+        }
+        .bento-card.md\:col-span-2.md\:row-span-1 .agent-image-wrapper img {
+            height: 180px;
+            object-fit: cover;
+            object-position: center;
+        }
+        .bento-card.group:hover .agent-image-wrapper img {
+            transform: scale(1.04);
+            filter: saturate(1.08) brightness(1.03);
+        }
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.12) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .bento-card:hover::before {
+            opacity: 1;
+        }
+
+        /* 隐藏滚动条 */
+        ::-webkit-scrollbar { display: none; }
+
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 100px 0;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+        }
+        .tag:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: white;
+        }
+
+        .avatar-glow {
+            box-shadow: 0 0 40px rgba(56, 189, 248, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* 社交连接交互动效 */
+        .social-button {
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+        }
+        .social-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.5);
+        }
+        .social-button:active {
+            transform: translateY(-1px);
+        }
+        
+        /* Telegram 悬浮态 */
+        .tg-hover:hover {
+            border-color: #24A1DE;
+            background: rgba(36, 161, 222, 0.12);
+        }
+        /* WeChat 悬浮态 */
+        .wx-hover:hover {
+            border-color: #07C160;
+            background: rgba(7, 193, 96, 0.12);
+        }
+        /* X 悬浮态 */
+        .x-hover:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* 加载动画 */
+        .loader-ring {
+            border: 2px solid rgba(255,255,255,0.1);
+            border-top: 2px solid #38bdf8;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+
+    <script>
+        // 背景设备适配（百度浏览器等兼容性处理）
+        function adaptBackground() {
+            var isMobile = window.innerWidth <= 768;
+            var video = document.getElementById('background-video');
+            var videoContainer = document.querySelector('.video-container');
+            var mobileBg = document.querySelector('.mobile-anim-bg');
+            var mobileParticles = document.querySelector('.mobile-particles');
+
+            if (isMobile) {
+                // 强制隐藏视频，显示移动端背景
+                if (videoContainer) videoContainer.style.display = 'none';
+                if (mobileBg) mobileBg.style.display = 'block';
+                if (mobileParticles) mobileParticles.style.display = 'block';
+                if (video) video.pause();
+            } else {
+                // 桌面端显示视频，隐藏移动端背景
+                if (videoContainer) videoContainer.style.display = '';
+                if (mobileBg) mobileBg.style.display = 'none';
+                if (mobileParticles) mobileParticles.style.display = 'none';
+                if (video) {
+                    video.play().catch(function(error) {
+                        console.log('视频自动播放被阻止:', error);
+                    });
+                }
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', adaptBackground);
+        window.addEventListener('resize', adaptBackground);
+    </script>
+
+    <!-- 固定背景（桌面端视频 / 移动端动画渐变） -->
+    <div class="video-container">
+        <video id="background-video" muted loop playsinline>
+            <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260217_030345_246c0224-10a4-422c-b324-070b7c0eceda.mp4" type="video/mp4">
+        </video>
+        <div class="absolute inset-0 bg-black/65"></div>
+    </div>
+    <div class="mobile-anim-bg"></div>
+    <div class="mobile-particles">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+    </div>
+
+    <!-- 导航栏 - 优化后的透明效果 -->
+    <nav class="fixed top-0 left-0 w-full flex items-center justify-between px-6 py-5 md:px-[120px] md:py-[18px] z-50 backdrop-blur-2xl bg-black/10 border-b border-white/5">
+        <div class="flex items-center gap-[40px]">
+            <div class="text-[20px] font-medium tracking-tight cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+                AI <span class="text-white/50">INSIGHTS</span>
+            </div>
+            <div class="hidden md:flex items-center gap-[30px]">
+                <a href="/" class="text-[14px] font-medium opacity-70 hover:opacity-100 transition-opacity">首页</a>
+                <a href="#stack" class="text-[14px] font-medium opacity-70 hover:opacity-100 transition-opacity">技术栈</a>
+                <a href="#lab" class="text-[14px] font-medium opacity-70 hover:opacity-100 transition-opacity">开源探索</a>
+                <a href="#ai-tools" class="text-[14px] font-medium opacity-70 hover:opacity-100 transition-opacity">工具推荐</a>
+                <a href="#services" class="text-[14px] font-medium opacity-70 hover:opacity-100 transition-opacity">服务</a>
+                <a href="#about" class="text-[14px] font-medium opacity-70 hover:opacity-100 transition-opacity">关于我</a>
+                <a href="/articles" class="text-[14px] font-medium opacity-70 hover:opacity-100 transition-opacity">文章</a>
+                <a href="/tutorials" class="text-[14px] font-medium opacity-70 hover:opacity-100 transition-opacity">教程</a>
+                <a href="/tags" class="text-[14px] font-medium opacity-70 hover:opacity-100 transition-opacity">标签</a>
+                <a href="/search" class="text-[14px] font-medium opacity-70 hover:opacity-100 transition-opacity">搜索</a>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="https://twitter.com/Lucas9693265618" target="_blank" class="btn-layered group hidden md:flex">
+                <div class="light-streak"></div>
+                <div class="btn-inner bg-black/40 text-[14px] font-medium flex items-center gap-2">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                    关注 Twitter
+                </div>
+            </a>
+            <!-- 移动端菜单按钮 -->
+            <button id="mobile-menu-button" class="md:hidden p-2 rounded-full bg-white/5">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 移动端菜单 -->
+    <div id="mobile-menu" class="fixed inset-0 bg-black/95 z-50 flex flex-col p-6 transform translate-x-full transition-transform duration-300 md:hidden">
+        <div class="flex justify-between items-center mb-12">
+            <div class="text-[20px] font-medium tracking-tight">
+                AI <span class="text-white/50">INSIGHTS</span>
+            </div>
+            <button id="close-menu-button" class="p-2 rounded-full bg-white/5">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <div class="flex flex-col gap-6">
+            <a href="/" class="text-lg font-medium py-2 border-b border-white/10">首页</a>
+            <a href="#stack" class="text-lg font-medium py-2 border-b border-white/10">技术栈</a>
+            <a href="#lab" class="text-lg font-medium py-2 border-b border-white/10">开源探索</a>
+            <a href="#ai-tools" class="text-lg font-medium py-2 border-b border-white/10">工具推荐</a>
+            <a href="#services" class="text-lg font-medium py-2 border-b border-white/10">服务</a>
+            <a href="#about" class="text-lg font-medium py-2 border-b border-white/10">关于我</a>
+            <a href="/articles" class="text-lg font-medium py-2 border-b border-white/10">文章</a>
+            <a href="/tutorials" class="text-lg font-medium py-2 border-b border-white/10">教程</a>
+            <a href="/search" class="text-lg font-medium py-2 border-b border-white/10">搜索</a>
+        </div>
+        <div class="mt-auto">
+            <a href="https://twitter.com/Lucas9693265618" target="_blank" class="btn-layered group w-full justify-center">
+                <div class="light-streak"></div>
+                <div class="btn-inner bg-black/40 text-[14px] font-medium flex items-center gap-2">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                    关注 Twitter
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- 第一页：Hero Section -->
+    <section id="hero">
+        <div class="flex flex-col items-center gap-[40px] text-center px-6">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-[20px] bg-white/10 border border-white/20 backdrop-blur-md">
+                <div class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,211,238,0.8)]"></div>
+                <span class="text-[13px] font-medium">
+                    <span class="opacity-60">当前追踪:</span> 
+                    <span class="text-white">Next-Gen Agent Ecosystem</span>
+                </span>
+            </div>
+
+            <div class="flex flex-col items-center gap-[24px]">
+                <h1 class="text-[42px] md:text-[72px] font-medium leading-[1.05] max-w-[900px] gradient-heading tracking-tight">
+                    洞察 AI 趋势，<br>链接开源生态。
+                </h1>
+                <p class="text-[16px] md:text-[18px] font-normal text-white/70 max-w-[680px] leading-relaxed drop-shadow-lg">
+                    在 Vibe Coding 的浪潮下，我们站在巨人的肩膀上。这里分享我对全球最火热 AI 开源项目的深度研究与实践。
+                </p>
+            </div>
+
+            <div class="flex flex-col md:flex-row items-center gap-4">
+                <a href="#lab" class="btn-layered">
+                    <div class="light-streak !bg-white/40"></div>
+                    <div class="btn-inner bg-white text-black text-[14px] font-bold">查看开源项目</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第二页：技术栈 -->
+    <section id="stack" class="bg-white/[0.02]">
+        <div class="mb-20 text-center px-6">
+            <h2 class="text-[36px] md:text-[52px] font-medium gradient-heading mb-6">工具与模型</h2>
+            <p class="text-white/60 text-[16px] max-w-2xl mx-auto">
+                熟练运用这些智能体与开发工具，在 AI 浪潮中保持领先。
+            </p>
+        </div>
+
+        <div class="relative w-full overflow-hidden py-12">
+            <div class="scroll-container">
+                <div class="tech-card"><i data-lucide="sparkles" class="w-10 h-10 text-purple-400"></i><span class="font-medium">Claude</span></div>
+                <div class="tech-card"><i data-lucide="message-square" class="w-10 h-10 text-emerald-400"></i><span class="font-medium">ChatGPT</span></div>
+                <div class="tech-card"><i data-lucide="rocket" class="w-10 h-10 text-blue-300"></i><span class="font-medium">Minimax</span></div>
+                <div class="tech-card"><i data-lucide="wand-2" class="w-10 h-10 text-orange-300"></i><span class="font-medium">Hermes</span></div>
+                <div class="tech-card"><i data-lucide="terminal" class="w-10 h-10 text-cyan-400"></i><span class="font-medium">Cursor</span></div>
+                <div class="tech-card"><i data-lucide="layout" class="w-10 h-10 text-blue-500"></i><span class="font-medium">OpenCanvas</span></div>
+                <div class="tech-card"><i data-lucide="bot" class="w-10 h-10 text-red-400"></i><span class="font-medium">OpenClaw</span></div>
+                <div class="tech-card"><i data-lucide="zap" class="w-10 h-10 text-yellow-400"></i><span class="font-medium">Vibe Coding</span></div>
+                <!-- 全套循环（8张完整复制，实现无缝衔接） -->
+                <div class="tech-card"><i data-lucide="sparkles" class="w-10 h-10 text-purple-400"></i><span class="font-medium">Claude</span></div>
+                <div class="tech-card"><i data-lucide="message-square" class="w-10 h-10 text-emerald-400"></i><span class="font-medium">ChatGPT</span></div>
+                <div class="tech-card"><i data-lucide="rocket" class="w-10 h-10 text-blue-300"></i><span class="font-medium">Minimax</span></div>
+                <div class="tech-card"><i data-lucide="wand-2" class="w-10 h-10 text-orange-300"></i><span class="font-medium">Hermes</span></div>
+                <div class="tech-card"><i data-lucide="terminal" class="w-10 h-10 text-cyan-400"></i><span class="font-medium">Cursor</span></div>
+                <div class="tech-card"><i data-lucide="layout" class="w-10 h-10 text-blue-500"></i><span class="font-medium">OpenCanvas</span></div>
+                <div class="tech-card"><i data-lucide="bot" class="w-10 h-10 text-red-400"></i><span class="font-medium">OpenClaw</span></div>
+                <div class="tech-card"><i data-lucide="zap" class="w-10 h-10 text-yellow-400"></i><span class="font-medium">Vibe Coding</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第三页：开源探索 -->
+    <section id="lab" class="px-6">
+        <div class="mb-16 text-center">
+            <h2 class="text-[36px] md:text-[52px] font-medium gradient-heading mb-6">开源生态探索</h2>
+            <p class="text-white/60 text-[16px]">深度追踪这些重塑 AI 范式的顶级开源项目</p>
+        </div>
+
+        <div class="max-w-[1200px] w-full grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-6 h-auto md:h-[650px]">
+            <!-- OpenClaw - 左侧大卡片 -->
+            <div class="bento-card md:col-span-2 md:row-span-2 justify-end group cursor-pointer">
+                <a href="https://github.com/openclaw/openclaw" target="_blank" class="absolute inset-0 z-20"></a>
+                <div class="relative z-10 p-4">
+                    <div class="agent-image-wrapper">
+                        <img src="https://justice-bxh.oss-cn-hangzhou.aliyuncs.com/prod/RPA/application/computerImage/2026/02/01/6d42e93a9dd986aeb14eae48066b1774/screenshot_2026-02-01_09-46-24.png" alt="OpenClaw 智能体图示">
+                    </div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-[10px] px-2 py-0.5 bg-red-500/30 text-red-200 rounded-full border border-red-500/40 font-bold">Trending</span>
+                    </div>
+                    <h3 class="text-3xl font-medium mb-3">OpenClaw</h3>
+                    <p class="text-white/70 text-sm leading-relaxed mb-4">通过视觉理解屏幕并进行自主操作的 AI UI 交互方案。</p>
+                    <div class="flex items-center gap-2 text-red-300 text-sm font-semibold group-hover:gap-4 transition-all">
+                        查看详情 <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hermes Agent -->
+            <div class="bento-card md:col-span-2 md:row-span-1 justify-center group cursor-pointer">
+                <a href="https://github.com/nousresearch/hermes-agent" target="_blank" class="absolute inset-0 z-20"></a>
+                <div class="relative z-10">
+                    <div class="agent-image-wrapper">
+                        <canvas class="absolute inset-0 h-full w-full pointer-events-none" style="mix-blend-mode:overlay" width="748" height="610"></canvas>
+                        <img src="https://th.bing.com/th?id=OIF.L%2fJayfb%2fWG4CB4wtfG7WMw&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Hermes Agent 智能体图示">
+                    </div>
+                    <div class="flex items-start gap-6">
+                        <div>
+                            <h3 class="text-xl font-medium mb-1">Hermes Agent</h3>
+                            <p class="text-white/70 text-sm">极致灵动的多任务协作智能体，支持复杂工作流编排与智能任务分配。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OpenCode -->
+            <div class="bento-card md:col-span-1 md:row-span-1 flex flex-col justify-between group cursor-pointer">
+                <a href="https://github.com/anomalyco/opencode" target="_blank" class="absolute inset-0 z-20"></a>
+                <div class="agent-image-wrapper">
+                    <img src="https://ts2.tc.mm.bing.net/th/id/OIP-C.jh0Z2YwnzAxPH0ekKjTidAHaEK?rs=1&pid=ImgDetMain&o=7&rm=3" alt="OpenCode 智能体图示">
+                </div>
+                <h3 class="font-medium text-lg">OpenCode</h3>
+                <p class="text-white/60 text-[12px]">开源AI编码代理</p>
+            </div>
+
+            <!-- 更多项目卡片 -->
+            <div class="bento-card md:col-span-1 md:row-span-1 flex flex-col justify-between group cursor-pointer overflow-hidden">
+                <a href="https://github.com" target="_blank" class="absolute inset-0 z-20"></a>
+                <div class="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div class="relative z-10 flex-1 flex flex-col items-center justify-center py-4">
+                    <div class="relative mb-4">
+                        <div class="absolute inset-0 bg-cyan-500/20 blur-xl rounded-full"></div>
+                        <div class="relative p-5 rounded-2xl bg-white/5 border border-white/10">
+                            <i data-lucide="compass" class="w-10 h-10 text-cyan-400"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-medium mb-1">更多项目</h3>
+                    <p class="text-white/60 text-sm text-center">探索更多开源AI项目</p>
+                </div>
+                <div class="relative z-10 flex items-center justify-center gap-2 py-3 border-t border-white/5">
+                    <span class="text-cyan-400 text-sm font-semibold group-hover:gap-3 transition-all flex items-center">
+                        浏览 GitHub <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- AI 工具推荐 -->
+    <section id="ai-tools" class="px-6 py-20 bg-white/[0.01]">
+        <div class="mb-16 text-center">
+            <h2 class="text-[36px] md:text-[52px] font-medium gradient-heading mb-6">AI 工具推荐</h2>
+            <p class="text-white/60 text-[16px]">精选 AI 工具，提升工作效率</p>
+        </div>
+
+        <div class="max-w-[1200px] w-full">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 工具卡片 1 -->
+                <div class="bento-card p-6 border border-white/10 rounded-2xl bg-white/5 hover:border-white/30 transition-all">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                            <i data-lucide="code" class="w-6 h-6 text-blue-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Cursor</h3>
+                    </div>
+                    <p class="text-white/60 text-sm mb-4">AI 驱动的代码编辑器，提供智能代码补全和生成功能</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="text-xs px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full">代码编辑</span>
+                        <span class="text-xs px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full">AI 辅助</span>
+                    </div>
+                    <a href="https://www.cursor.sh" target="_blank" class="text-cyan-400 hover:underline text-sm flex items-center gap-1 relative z-10">
+                        访问官网 <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+                    </a>
+                </div>
+
+                <!-- 工具卡片 2 -->
+                <div class="bento-card p-6 border border-white/10 rounded-2xl bg-white/5 hover:border-white/30 transition-all">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
+                            <i data-lucide="message-square" class="w-6 h-6 text-purple-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Claude</h3>
+                    </div>
+                    <p class="text-white/60 text-sm mb-4">Anthropic 开发的大型语言模型，擅长长文本理解和创意写作</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="text-xs px-2 py-1 bg-purple-500/20 text-purple-400 rounded-full">LLM</span>
+                        <span class="text-xs px-2 py-1 bg-purple-500/20 text-purple-400 rounded-full">创意写作</span>
+                    </div>
+                    <a href="https://www.anthropic.com/claude" target="_blank" class="text-cyan-400 hover:underline text-sm flex items-center gap-1 relative z-10">
+                        访问官网 <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+                    </a>
+                </div>
+
+                <!-- 工具卡片 3 -->
+                <div class="bento-card p-6 border border-white/10 rounded-2xl bg-white/5 hover:border-white/30 transition-all">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center">
+                            <i data-lucide="brain" class="w-6 h-6 text-green-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">ChatGPT</h3>
+                    </div>
+                    <p class="text-white/60 text-sm mb-4">OpenAI 开发的对话式 AI，支持多种任务和创意内容生成</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="text-xs px-2 py-1 bg-green-500/20 text-green-400 rounded-full">对话 AI</span>
+                        <span class="text-xs px-2 py-1 bg-green-500/20 text-green-400 rounded-full">多用途</span>
+                    </div>
+                    <a href="https://chatgpt.com" target="_blank" class="text-cyan-400 hover:underline text-sm flex items-center gap-1 relative z-10">
+                        访问官网 <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+                    </a>
+                </div>
+
+                <!-- 工具卡片 4 -->
+                <div class="bento-card p-6 border border-white/10 rounded-2xl bg-white/5 hover:border-white/30 transition-all">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center">
+                            <i data-lucide="image" class="w-6 h-6 text-yellow-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">MidJourney</h3>
+                    </div>
+                    <p class="text-white/60 text-sm mb-4">AI 图像生成工具，能够根据文本描述创建高质量图像</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="text-xs px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full">图像生成</span>
+                        <span class="text-xs px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full">创意设计</span>
+                    </div>
+                    <a href="https://www.midjourney.com" target="_blank" class="text-cyan-400 hover:underline text-sm flex items-center gap-1 relative z-10">
+                        访问官网 <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+                    </a>
+                </div>
+
+                <!-- 工具卡片 5 -->
+                <div class="bento-card p-6 border border-white/10 rounded-2xl bg-white/5 hover:border-white/30 transition-all">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center">
+                            <i data-lucide="music" class="w-6 h-6 text-red-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Suno AI</h3>
+                    </div>
+                    <p class="text-white/60 text-sm mb-4">AI 音乐生成工具，能够创建原创音乐和歌词</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="text-xs px-2 py-1 bg-red-500/20 text-red-400 rounded-full">音乐生成</span>
+                        <span class="text-xs px-2 py-1 bg-red-500/20 text-red-400 rounded-full">创意音频</span>
+                    </div>
+                    <a href="https://suno.com" target="_blank" class="text-cyan-400 hover:underline text-sm flex items-center gap-1 relative z-10">
+                        访问官网 <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+                    </a>
+                </div>
+
+                <!-- 工具卡片 6 -->
+                <div class="bento-card p-6 border border-white/10 rounded-2xl bg-white/5 hover:border-white/30 transition-all">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center">
+                            <i data-lucide="zap" class="w-6 h-6 text-indigo-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Copilot</h3>
+                    </div>
+                    <p class="text-white/60 text-sm mb-4">GitHub Copilot，AI 代码助手，提供实时代码建议</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="text-xs px-2 py-1 bg-indigo-500/20 text-indigo-400 rounded-full">代码助手</span>
+                        <span class="text-xs px-2 py-1 bg-indigo-500/20 text-indigo-400 rounded-full">GitHub</span>
+                    </div>
+                    <a href="https://github.com/features/copilot" target="_blank" class="text-cyan-400 hover:underline text-sm flex items-center gap-1 relative z-10">
+                        访问官网 <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 知识付费服务 -->
+    <section id="services" class="px-6 py-20 bg-gradient-to-b from-transparent via-purple-900/10 to-transparent">
+        <div class="max-w-[1200px] mx-auto">
+            <div class="mb-16 text-center">
+                <h2 class="text-[36px] md:text-[52px] font-medium gradient-heading mb-6">专业 AI 咨询服务</h2>
+                <p class="text-white/60 text-[16px]">遇到 AI 相关问题？让我来帮你解答</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[900px] mx-auto">
+                <!-- 单次解答方案 -->
+                <div class="bg-white/[0.03] backdrop-blur-xl rounded-3xl p-8 md:p-10 border border-white/10 hover:border-cyan-500/30 transition-all duration-300 hover:shadow-2xl hover:shadow-cyan-500/10 relative overflow-hidden group">
+                    <div class="absolute -top-20 -right-20 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition-all"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/10 rounded-full text-cyan-400 text-sm font-medium mb-6">
+                            <i data-lucide="message-circle" class="w-4 h-4"></i>
+                            快速解答
+                        </div>
+                        
+                        <h3 class="text-3xl font-bold mb-4">单次答疑</h3>
+                        
+                        <div class="mb-8">
+                            <span class="text-5xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">88</span>
+                            <span class="text-xl text-white/60 ml-2">元/次</span>
+                        </div>
+                        
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-white/70">AI 工具使用问题</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-white/70">代码报错问题诊断</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-white/70">技术方案咨询</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-white/70">24小时内响应</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-white/70">一对一解答</span>
+                            </li>
+                        </ul>
+                        
+                        <a href="https://twitter.com/Lucas9693265618" target="_blank" class="block w-full py-4 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 text-white font-semibold rounded-xl text-center transition-all hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/25">
+                            立即咨询
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 月租方案 -->
+                <div class="bg-white/[0.03] backdrop-blur-xl rounded-3xl p-8 md:p-10 border border-purple-500/30 hover:border-purple-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/10 relative overflow-hidden group">
+                    <div class="absolute -top-20 -right-20 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-all"></div>
+                    
+                    <!-- 推荐标签 -->
+                    <div class="absolute top-4 right-4">
+                        <span class="px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold rounded-full">推荐</span>
+                    </div>
+                    
+                    <div class="relative z-10">
+                        <div class="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/10 rounded-full text-purple-400 text-sm font-medium mb-6">
+                            <i data-lucide="crown" class="w-4 h-4"></i>
+                            VIP 服务
+                        </div>
+                        
+                        <h3 class="text-3xl font-bold mb-4">月租答疑</h3>
+                        
+                        <div class="mb-8">
+                            <span class="text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">1888</span>
+                            <span class="text-xl text-white/60 ml-2">元/月</span>
+                        </div>
+                        
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-white/70">无限次 AI 问题解答</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-white/70">优先响应（2小时内）</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-white/70">个性化方案设计</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-white/70">专属微信群交流</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-white/70">项目代码 Review</span>
+                            </li>
+                        </ul>
+                        
+                        <a href="https://twitter.com/Lucas9693265618" target="_blank" class="block w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white font-semibold rounded-xl text-center transition-all hover:scale-105 hover:shadow-lg hover:shadow-purple-500/25">
+                            开通月租
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12 text-center">
+                <p class="text-white/50 text-sm mb-4">有问题？直接通过以下方式联系我</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="https://twitter.com/Lucas9693265618" target="_blank" class="flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all text-white/70 hover:text-white">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                        Twitter @Lucas9693265618
+                    </a>
+                    <button onclick="copyWechat()" class="flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all text-white/70 hover:text-white cursor-pointer">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 01.213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 00.167-.054l1.903-1.114a.864.864 0 01.717-.098 10.16 10.16 0 002.838.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178A1.17 1.17 0 014.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178 1.17 1.17 0 01-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.722.722 0 01.598.082l1.584.926a.272.272 0 00.14.047c.134 0 .24-.111.24-.247 0-.06-.023-.12-.038-.173l-.327-1.233a.582.582 0 01-.023-.156.49.49 0 01.201-.398C23.024 18.48 24 16.82 24 14.98c0-3.21-2.931-5.837-6.656-6.088V8.89a5.718 5.718 0 00-.406-.032zm-1.84 3.133c.536 0 .97.44.97.983a.976.976 0 01-.97.983.976.976 0 01-.97-.983c0-.542.434-.983.97-.983zm4.857 0c.536 0 .97.44.97.983a.976.976 0 01-.97.983.976.976 0 01-.97-.983c0-.542.434-.983.97-.983z"/></svg>
+                        微信: -L-0111111
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第四页：关于我 -->
+    <section id="about" class="px-6 bg-white/[0.01]">
+        <div class="mb-16 text-center">
+            <h2 class="text-[36px] md:text-[52px] font-medium gradient-heading mb-6">关于作者</h2>
+            <p class="text-white/60 text-[16px]">跨越代码与创意的边界</p>
+        </div>
+
+        <div class="max-w-[1200px] w-full grid grid-cols-1 md:grid-cols-12 gap-6">
+            <!-- 个人简介卡片 -->
+            <div class="bento-card md:col-span-8 p-8 md:p-12 overflow-hidden">
+                <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-sky-500/5 blur-[100px] rounded-full pointer-events-none"></div>
+                
+                <div class="flex flex-col md:flex-row gap-10 items-center h-full">
+                    <div class="relative flex-shrink-0">
+                        <div class="w-32 h-32 md:w-40 md:h-40 rounded-[40px] overflow-hidden shadow-2xl avatar-glow relative group bg-white/5 flex items-center justify-center">
+                             <!-- 加载态 -->
+                             <div id="avatar-loader" class="hidden"></div>
+                             <!-- 头像图片 -->
+                             <img id="author-avatar" src="https://api.dicebear.com/7.x/micah/svg?seed=ai-explorer&backgroundColor=c0aede" alt="个人头像" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110">
+                             <!-- SVG 兜底 -->
+                             <div id="avatar-fallback" class="hidden w-full h-full items-center justify-center bg-gradient-to-br from-zinc-800 to-black">
+                                <i data-lucide="user" class="w-16 h-16 text-white/20"></i>
+                             </div>
+                             <div class="absolute inset-0 bg-gradient-to-tr from-sky-400/20 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        </div>
+                        <div class="absolute -bottom-2 -right-2 bg-sky-400 w-6 h-6 rounded-full border-4 border-[#050505] animate-pulse z-10 shadow-[0_0_15px_rgba(56,189,248,0.5)]"></div>
+                    </div>
+                    
+                    <div class="flex-1 text-center md:text-left">
+                        <h3 class="text-3xl md:text-4xl font-medium mb-5 bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">AI 探索者</h3>
+                        <p class="text-white/70 text-[16px] md:text-[18px] leading-[1.8] mb-8 max-w-[500px]">
+                            全栈开发工程师 / AI 研究员。专注于 LLM 智能体、提示词工程以及 Vibe Coding 实践。我致力于将复杂的 AI 技术转化为简洁、高效且触手加及的开源工具。
+                        </p>
+                        <div class="flex flex-wrap justify-center md:justify-start gap-3">
+                            <span class="tag">#LLM Agent</span>
+                            <span class="tag">#Full-Stack</span>
+                            <span class="tag">#OpenSource</span>
+                            <span class="tag">#Prompt Eng</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 建立连接 -->
+            <div class="bento-card md:col-span-4 p-8">
+                <h3 class="text-xl font-medium mb-6 flex items-center gap-2">
+                    <i data-lucide="link" class="w-5 h-5 text-cyan-400"></i> 建立连接
+                </h3>
+                <div class="space-y-4 flex-1 flex flex-col justify-center">
+                    <a href="https://t.me/lkorkj" target="_blank" class="social-button tg-hover flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/10 group">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 rounded-xl bg-white/5 group-hover:bg-[#24A1DE]/20 group-hover:text-[#24A1DE] transition-all">
+                                <i data-lucide="send" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-sm font-bold text-white/70 group-hover:text-white">Telegram</span>
+                        </div>
+                        <i data-lucide="arrow-right" class="w-4 h-4 text-white/20 group-hover:text-[#24A1DE] group-hover:translate-x-1 transition-all"></i>
+                    </a>
+                    <a href="javascript:void(0)" onclick="copyWechat()" class="social-button wx-hover flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/10 group">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 rounded-xl bg-white/5 group-hover:bg-[#07C160]/20 group-hover:text-[#07C160] transition-all">
+                                <i data-lucide="message-circle" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-sm font-bold text-white/70 group-hover:text-white">WeChat: -L-0111111</span>
+                        </div>
+                        <i data-lucide="copy" class="w-4 h-4 text-white/20 group-hover:text-[#07C160] group-hover:translate-x-1 transition-all"></i>
+                    </a>
+                    <a href="https://twitter.com/Lucas9693265618" target="_blank" class="social-button x-hover flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/10 group">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 rounded-xl bg-white/5 group-hover:bg-white/10 group-hover:text-white transition-all">
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                            </div>
+                            <span class="text-sm font-bold text-white/70 group-hover:text-white">Twitter / X</span>
+                        </div>
+                        <i data-lucide="arrow-right" class="w-4 h-4 text-white/20 group-hover:text-white group-hover:translate-x-1 transition-all"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 border-t border-white/5 flex flex-col items-center gap-4">
+        <div class="opacity-30 text-[12px] uppercase tracking-widest">© 2026 AI Insights. Built with Passion.</div>
+    </footer>
+
+    <script>
+        /**
+         * 加载头像逻辑
+         */
+        async function loadProfileAvatar() {
+            const avatarImg = document.getElementById('author-avatar');
+            const loader = document.getElementById('avatar-loader');
+            const fallback = document.getElementById('avatar-fallback');
+            
+            const showFallback = () => {
+                loader.classList.add('hidden');
+                avatarImg.classList.add('hidden');
+                fallback.classList.remove('hidden');
+                fallback.style.display = 'flex';
+            };
+
+            const showAvatar = (src) => {
+                avatarImg.src = src;
+                avatarImg.classList.remove('hidden');
+                loader.classList.add('hidden');
+                fallback.classList.add('hidden');
+            };
+
+            try {
+                const avatarUrl = "https://c-ssl.dtstatic.com/uploads/blog/202304/08/20230408151336_6e1cc.thumb.400_0.jpg";
+                const img = new Image();
+                img.onload = () => showAvatar(avatarUrl);
+                img.onerror = () => showFallback();
+                img.src = avatarUrl;
+
+            } catch (error) {
+                console.error("Avatar failed:", error);
+                showFallback();
+            }
+        }
+
+        function copyWechat() {
+            navigator.clipboard.writeText('-L-0111111').then(() => {
+                alert('微信号已复制: -L-0111111');
+            });
+        }
+
+        window.onload = function() {
+            lucide.createIcons();
+        };
+
+        // Bento Grid 交互效果
+        document.querySelectorAll('.bento-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--x', `${x}%`);
+                card.style.setProperty('--y', `${y}%`);
+            });
+        });
+
+
+
+        // 移动端菜单逻辑
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const closeMenuButton = document.getElementById('close-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (mobileMenuButton && closeMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.remove('translate-x-full');
+            });
+
+            closeMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.add('translate-x-full');
+            });
+
+            // 点击菜单外关闭
+            mobileMenu.addEventListener('click', (e) => {
+                if (e.target === mobileMenu) {
+                    mobileMenu.classList.add('translate-x-full');
+                }
+            });
+
+            // 点击菜单项后关闭菜单
+            const menuItems = mobileMenu.querySelectorAll('a');
+            menuItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    mobileMenu.classList.add('translate-x-full');
+                });
+            });
+        }
+
+        // 手机端背景切换
+        (function() {
+            var mobileBg = document.getElementById('mobile-bg');
+            var videoContainer = document.querySelector('.video-container');
+            function updateBg() {
+                if (window.innerWidth <= 768) {
+                    if (mobileBg) mobileBg.style.display = 'block';
+                    if (videoContainer) videoContainer.style.display = 'none';
+                } else {
+                    if (mobileBg) mobileBg.style.display = 'none';
+                    if (videoContainer) videoContainer.style.display = 'block';
+                }
+            }
+            updateBg();
+            window.addEventListener('resize', updateBg);
+        })();
+    </script>
+</body>
+</html>

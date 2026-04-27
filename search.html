@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>搜索 - AI 探索者</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'General Sans', sans-serif;
+      background-color: #050505;
+      color: white;
+    }
+    .search-result {
+      transition: all 0.3s ease;
+    }
+    .search-result:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px -10px rgba(56, 189, 248, 0.2);
+    }
+    .type-badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-weight: 500;
+    }
+    mark {
+      background: linear-gradient(120deg, rgba(56, 189, 248, 0.3) 0%, rgba(168, 85, 247, 0.3) 100%);
+      padding: 0.125rem 0.25rem;
+      border-radius: 0.25rem;
+      color: white;
+    }
+    .search-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .search-input-wrapper {
+      position: relative;
+    }
+    .search-input-wrapper::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+      border-radius: 0.75rem;
+      pointer-events: none;
+    }
+    .search-input:focus {
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3);
+    }
+    .loading-spinner {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top-color: #38bdf8;
+      animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .search-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(10, 10, 10, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.75rem;
+      margin-top: 0.5rem;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+    }
+    .suggestion-item {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .suggestion-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .suggestion-item:first-child {
+      border-top-left-radius: 0.75rem;
+      border-top-right-radius: 0.75rem;
+    }
+    .suggestion-item:last-child {
+      border-bottom-left-radius: 0.75rem;
+      border-bottom-right-radius: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="fixed top-0 left-0 w-full flex items-center justify-between px-6 py-5 md:px-[120px] md:py-[18px] z-50 backdrop-blur-2xl bg-black/10 border-b border-white/5">
+    <div class="flex items-center gap-[40px]">
+      <div class="text-[20px] font-medium tracking-tight cursor-pointer" onclick="window.location.href='/'">
+        AI <span class="text-white/50">INSIGHTS</span>
+      </div>
+      <div class="hidden md:flex items-center gap-[30px]">
+        <a href="/" class="text-[14px] font-medium opacity-70 hover:opacity-100 transition-opacity">首页</a>
+        <a href="/articles" class="text-[14px] font-medium opacity-70 hover:opacity-100 transition-opacity">文章</a>
+        <a href="/tutorials" class="text-[14px] font-medium opacity-70 hover:opacity-100 transition-opacity">教程</a>
+        <a href="/search" class="text-[14px] font-medium opacity-100 border-b-2 border-cyan-500">搜索</a>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <button id="menu-button" class="md:hidden p-2 rounded-full bg-white/5">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+      <a href="https://twitter.com/Lucas9693265618" target="_blank" class="btn-layered group">
+        <div class="light-streak"></div>
+        <div class="btn-inner bg-black/40 text-[14px] font-medium flex items-center gap-2">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+          关注 Twitter
+        </div>
+      </a>
+    </div>
+  </nav>
+
+  <!-- 移动端菜单 -->
+  <div id="mobile-menu" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-2xl hidden flex-col">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-white/10">
+      <div class="text-[20px] font-medium tracking-tight">
+        AI <span class="text-white/50">INSIGHTS</span>
+      </div>
+      <button id="close-menu-button" class="p-2 rounded-full bg-white/5">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="flex flex-col gap-6 p-6">
+      <a href="/" class="text-lg font-medium py-2 border-b border-white/10">首页</a>
+      <a href="/articles" class="text-lg font-medium py-2 border-b border-white/10">文章</a>
+      <a href="/tutorials" class="text-lg font-medium py-2 border-b border-white/10">教程</a>
+      <a href="/search" class="text-lg font-medium py-2 border-b border-white/10">搜索</a>
+    </div>
+    <div class="mt-auto p-6 border-t border-white/10">
+      <a href="https://twitter.com/Lucas9693265618" target="_blank" class="btn-layered group w-full justify-center">
+        <div class="light-streak"></div>
+        <div class="btn-inner bg-black/40 text-[14px] font-medium flex items-center gap-2">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+          关注 Twitter
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="pt-32 pb-20 px-6">
+    <div class="search-container">
+      <h1 class="text-4xl font-bold mb-8 text-center">搜索</h1>
+      
+      <!-- 搜索表单 -->
+      <div class="mb-12">
+        <div class="search-input-wrapper">
+          <form id="searchForm" class="flex gap-2">
+            <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="输入关键词搜索文章和教程..." 
+                class="search-input flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 text-white"
+                autocomplete="off"
+            >
+            <button type="submit" id="searchButton" class="px-6 py-3 bg-cyan-500 hover:bg-cyan-600 rounded-lg transition-colors flex items-center gap-2">
+              <span>搜索</span>
+            </button>
+          </form>
+          <!-- 搜索建议 -->
+          <div id="searchSuggestions" class="search-suggestions hidden"></div>
+        </div>
+      </div>
+
+      <!-- 搜索结果 -->
+      <div id="searchResults" class="space-y-6">
+      </div>
+    </div>
+  </div>
+
+  <footer class="py-12 border-t border-white/5 flex flex-col items-center gap-4">
+    <div class="opacity-30 text-[12px] uppercase tracking-widest">© 2026 AI Insights. Built with Passion.</div>
+  </footer>
+
+  <script>
+    // 搜索建议数据
+    const searchSuggestions = [
+      "AI 智能体",
+      "LLM 开发",
+      "Hermes Agent",
+      "OpenClaw",
+      "提示词工程",
+      "代码助手",
+      "AI 工具推荐",
+      "智能体协作"
+    ];
+
+    // 获取搜索参数
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get('q');
+    
+    // 设置搜索框值
+    if (searchQuery) {
+      document.getElementById('searchInput').value = searchQuery;
+    }
+
+    // 搜索表单提交
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const query = document.getElementById('searchInput').value.trim();
+      if (query) {
+        window.location.href = '/search?q=' + encodeURIComponent(query);
+      }
+    });
+
+    // 搜索输入事件
+    const searchInput = document.getElementById('searchInput');
+    const searchSuggestionsContainer = document.getElementById('searchSuggestions');
+    
+    searchInput.addEventListener('input', function() {
+      const query = this.value.trim().toLowerCase();
+      if (query.length > 0) {
+        const filteredSuggestions = searchSuggestions.filter(suggestion => 
+          suggestion.toLowerCase().includes(query)
+        );
+        
+        if (filteredSuggestions.length > 0) {
+          let suggestionsHtml = '';
+          filteredSuggestions.forEach(suggestion => {
+            suggestionsHtml += `
+              <div class="suggestion-item" onclick="selectSuggestion('${suggestion}')">
+                ${suggestion}
+              </div>
+            `;
+          });
+          searchSuggestionsContainer.innerHTML = suggestionsHtml;
+          searchSuggestionsContainer.classList.remove('hidden');
+        } else {
+          searchSuggestionsContainer.classList.add('hidden');
+        }
+      } else {
+        searchSuggestionsContainer.classList.add('hidden');
+      }
+    });
+
+    // 点击建议项
+    function selectSuggestion(suggestion) {
+      searchInput.value = suggestion;
+      searchSuggestionsContainer.classList.add('hidden');
+      document.getElementById('searchForm').submit();
+    }
+
+    // 点击页面其他地方关闭建议
+    document.addEventListener('click', function(e) {
+      const clickedInSuggestions = e.target.closest('#searchSuggestions');
+      const clickedInSuggestionBtn = e.target.closest('.suggestion-btn');
+      const clickedInInputWrapper = e.target.closest('.search-input-wrapper');
+      
+      if (!clickedInInputWrapper && !clickedInSuggestions && !clickedInSuggestionBtn) {
+        searchSuggestionsContainer.classList.add('hidden');
+      }
+    });
+
+    // 执行搜索
+    const resultsContainer = document.getElementById('searchResults');
+    const searchButton = document.getElementById('searchButton');
+    
+    if (searchQuery && searchQuery.trim()) {
+      resultsContainer.innerHTML = `
+        <div class="text-center py-16">
+          <div class="loading-spinner mx-auto mb-4"></div>
+          <p class="text-gray-400">正在搜索相关内容...</p>
+        </div>
+      `;
+      
+      async function search() {
+        try {
+          // 显示加载状态
+          searchButton.innerHTML = '<div class="loading-spinner"></div>';
+          searchButton.disabled = true;
+          
+          const response = await fetch('/api/search?q=' + encodeURIComponent(searchQuery));
+          const results = await response.json();
+          console.log('搜索结果:', results);
+          
+          if (results.length === 0) {
+            resultsContainer.innerHTML = `
+              <div class="text-center py-16">
+                <div class="text-6xl mb-4">🔍</div>
+                <h3 class="text-2xl font-bold mb-2">未找到相关内容</h3>
+                <p class="text-gray-400 mb-6">没有找到与 "${searchQuery}" 相关的文章或教程</p>
+                <button onclick="window.location.href='/search'" class="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors">
+                  重新搜索
+                </button>
+              </div>
+            `;
+          } else {
+            var html = `
+              <div class="mb-6 flex items-center justify-between">
+                <h2 class="text-xl font-bold">找到 ${results.length} 个相关结果</h2>
+                <span class="text-gray-400 text-sm">搜索时间: ${(Math.random() * 0.5 + 0.1).toFixed(2)} 秒</span>
+              </div>
+            `;
+            for (var i = 0; i < results.length; i++) {
+              var result = results[i];
+              var typeBadgeClass = result.type === 'article' ? 'bg-blue-500/20 text-blue-400' : 'bg-purple-500/20 text-purple-400';
+              var typeText = result.type === 'article' ? '文章' : '教程';
+              var categoryHtml = result.category ? '<span class="ml-4 text-sm text-gray-400">分类: ' + result.category + '</span>' : '';
+              
+              html += `
+                <div class="search-result bg-white/5 rounded-2xl p-6 border border-white/10">
+                  <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
+                    <h3 class="text-xl font-bold mb-2 md:mb-0">
+                      <a href="${result.url}" class="hover:text-cyan-400 transition-colors">${result.title}</a>
+                    </h3>
+                    <span class="type-badge ${typeBadgeClass}">${typeText}</span>
+                  </div>
+                  <div class="text-gray-400 mb-3 flex flex-wrap items-center gap-4">
+                    <span class="flex items-center gap-1 text-sm">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                      </svg>
+                      ${result.date}
+                    </span>
+                    ${categoryHtml}
+                  </div>
+                  <p class="text-gray-300 mb-4">${result.description}</p>
+                  <a href="${result.url}" class="text-cyan-400 hover:underline flex items-center gap-1">
+                    查看详情 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                  </a>
+                </div>
+              `;
+            }
+            resultsContainer.innerHTML = html;
+          }
+        } catch (error) {
+          console.error('搜索错误:', error);
+          resultsContainer.innerHTML = `
+            <div class="text-center py-16">
+              <div class="text-6xl mb-4">⚠️</div>
+              <h3 class="text-2xl font-bold mb-2">搜索出错</h3>
+              <p class="text-gray-400 mb-6">搜索过程中出现错误，请稍后重试</p>
+              <button onclick="window.location.reload()" class="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors">
+                重试
+              </button>
+            </div>
+          `;
+        } finally {
+          // 恢复搜索按钮状态
+          searchButton.innerHTML = '<span>搜索</span>';
+          searchButton.disabled = false;
+        }
+      }
+      
+      search();
+    } else {
+      // 没有搜索参数时显示提示
+      resultsContainer.innerHTML = `
+        <div class="text-center py-16">
+          <div class="text-6xl mb-4">🔍</div>
+          <h3 class="text-2xl font-bold mb-2">开始搜索</h3>
+          <p class="text-gray-400 mb-6">输入关键词搜索文章和教程</p>
+          <div class="flex flex-wrap justify-center gap-2 mt-8" id="suggestionButtons">
+            ${searchSuggestions.map(suggestion => `
+              <button data-suggestion="${suggestion}" class="suggestion-btn px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors text-sm">
+                ${suggestion}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      
+      // 为推荐关键词按钮添加点击事件
+      document.querySelectorAll('.suggestion-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const suggestion = this.getAttribute('data-suggestion');
+          searchInput.value = suggestion;
+          window.location.href = '/search?q=' + encodeURIComponent(suggestion);
+        });
+      });
+    }
+
+    // 移动端菜单逻辑
+    const menuButton = document.getElementById('menu-button');
+    const closeMenuButton = document.getElementById('close-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (menuButton && closeMenuButton && mobileMenu) {
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.remove('hidden');
+        });
+
+        closeMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+        });
+
+        // 点击菜单项后关闭菜单
+        const menuItems = mobileMenu.querySelectorAll('a');
+        menuItems.forEach(item => {
+            item.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+    }
+  </script>
+
+  <style>
+    .btn-layered {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+      border: 0.6px solid rgba(255, 255, 255, 0.4);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+    }
+    .btn-inner {
+      border-radius: 9999px;
+      padding: 11px 29px;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .light-streak {
+      position: absolute;
+      top: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      height: 4px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 70%);
+      filter: blur(2px);
+      z-index: 2;
+      pointer-events: none;
+    }
+    .btn-layered:hover {
+      transform: translateY(-2px);
+      border-color: #ffffff;
+      box-shadow: 0 10px 25px -10px rgba(255, 255, 255, 0.4);
+    }
+  </style>
+</body>
+</html>

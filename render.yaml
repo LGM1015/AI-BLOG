@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: ai-blog
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production

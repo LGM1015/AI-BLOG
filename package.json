@@ -1,0 +1,23 @@
+{
+  "name": "ai-explorer-blog",
+  "version": "0.0.1",
+  "private": true,
+  "description": "静态 AI 技术博客展示页",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "npm run dev",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "vitepress": "^1.6.4"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "markdown-it": "^14.1.1",
+    "markdown-it-multimd-table": "^4.2.3",
+    "node-fetch": "^3.3.2"
+  }
+}
