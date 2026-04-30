@@ -1355,7 +1355,8 @@ app.get('/article/:id', (req, res) => {
 
 // 文章列表页面
 app.get('/articles', (req, res) => {
-  const { tag } = req.query;
+  const { tag, page } = req.query;
+  const PAGE_SIZE = 10;
   let articles = getAllArticles();
 
   // 按标签筛选
@@ -1364,6 +1365,13 @@ app.get('/articles', (req, res) => {
       article.tags && article.tags.includes(tag)
     );
   }
+
+  // 分页
+  const currentPage = Math.max(1, parseInt(page) || 1);
+  const totalItems = articles.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+  const safePage = Math.min(currentPage, totalPages);
+  const paginatedArticles = articles.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   // 获取所有标签
   const allTags = [...new Set(
@@ -1480,7 +1488,7 @@ app.get('/articles', (req, res) => {
           </div>
 
           <div class="space-y-8">
-            ${articles.length > 0 ? articles.map(article => `
+            ${paginatedArticles.length > 0 ? paginatedArticles.map(article => `
               <div class="article-card bg-white/5 rounded-2xl p-6 border border-white/10">
                 <h2 class="text-2xl font-bold mb-3">
                   <a href="/article/${article.id}" class="hover:text-cyan-400 transition-colors">${article.title}</a>
@@ -1504,6 +1512,20 @@ app.get('/articles', (req, res) => {
               </div>
             `}
           </div>
+
+          <!-- 分页 -->
+          ${totalPages > 1 ? `
+          <div class="flex justify-center items-center gap-2 mt-12">
+            ${safePage > 1 ? `<a href="/articles?page=${safePage - 1}${tag ? '&tag=' + encodeURIComponent(tag) : ''}" class="px-4 py-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all">← 上一页</a>` : `<span class="px-4 py-2 rounded-full bg-white/5 text-gray-500 cursor-not-allowed">← 上一页</span>`}
+            <div class="flex items-center gap-1">
+              ${Array.from({ length: totalPages }, (_, i) => i + 1).map(p => `
+                <a href="/articles?page=${p}${tag ? '&tag=' + encodeURIComponent(tag) : ''}" class="px-3 py-2 rounded-full text-sm transition-all ${p === safePage ? 'bg-cyan-500 text-white' : 'bg-white/10 text-gray-300 hover:bg-white/20'}">${p}</a>
+              `).join('')}
+            </div>
+            ${safePage < totalPages ? `<a href="/articles?page=${safePage + 1}${tag ? '&tag=' + encodeURIComponent(tag) : ''}" class="px-4 py-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all">下一页 →</a>` : `<span class="px-4 py-2 rounded-full bg-white/5 text-gray-500 cursor-not-allowed">下一页 →</span>`}
+          </div>
+          <p class="text-center text-gray-500 text-sm mt-4">第 ${safePage} / ${totalPages} 页，共 ${totalItems} 篇文章</p>
+          ` : `<p class="text-center text-gray-500 text-sm mt-8">共 ${totalItems} 篇文章</p>`}
         </div>
       </div>
 
@@ -1800,7 +1822,8 @@ app.get('/tags', (req, res) => {
 
 // 教程列表页面
 app.get('/tutorials', (req, res) => {
-  const { tag } = req.query;
+  const { tag, page } = req.query;
+  const PAGE_SIZE = 10;
   let tutorials = getAllTutorials();
 
   // 按标签筛选
@@ -1810,9 +1833,16 @@ app.get('/tutorials', (req, res) => {
     );
   }
 
+  // 分页
+  const currentPage = Math.max(1, parseInt(page) || 1);
+  const totalItems = tutorials.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+  const safePage = Math.min(currentPage, totalPages);
+  const paginatedTutorials = tutorials.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
   // 按分类分组
   const categories = {};
-  tutorials.forEach(t => {
+  paginatedTutorials.forEach(t => {
     const cat = t.category || 'other';
     const catName = t.categoryName || '其他';
     if (!categories[cat]) {
@@ -1976,6 +2006,20 @@ app.get('/tutorials', (req, res) => {
               <a href="/tutorials" class="text-cyan-400 hover:underline">查看所有教程</a>
             </div>
           `}
+
+          <!-- 分页 -->
+          ${totalPages > 1 ? `
+          <div class="flex justify-center items-center gap-2 mt-8">
+            ${safePage > 1 ? `<a href="/tutorials?page=${safePage - 1}${tag ? '&tag=' + encodeURIComponent(tag) : ''}" class="px-4 py-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all">← 上一页</a>` : `<span class="px-4 py-2 rounded-full bg-white/5 text-gray-500 cursor-not-allowed">← 上一页</span>`}
+            <div class="flex items-center gap-1">
+              ${Array.from({ length: totalPages }, (_, i) => i + 1).map(p => `
+                <a href="/tutorials?page=${p}${tag ? '&tag=' + encodeURIComponent(tag) : ''}" class="px-3 py-2 rounded-full text-sm transition-all ${p === safePage ? 'bg-cyan-500 text-white' : 'bg-white/10 text-gray-300 hover:bg-white/20'}">${p}</a>
+              `).join('')}
+            </div>
+            ${safePage < totalPages ? `<a href="/tutorials?page=${safePage + 1}${tag ? '&tag=' + encodeURIComponent(tag) : ''}" class="px-4 py-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all">下一页 →</a>` : `<span class="px-4 py-2 rounded-full bg-white/5 text-gray-500 cursor-not-allowed">下一页 →</span>`}
+          </div>
+          <p class="text-center text-gray-500 text-sm mt-4">第 ${safePage} / ${totalPages} 页，共 ${totalItems} 篇教程</p>
+          ` : `<p class="text-center text-gray-500 text-sm mt-8">共 ${totalItems} 篇教程</p>`}
         </div>
       </div>
 
