@@ -1373,12 +1373,16 @@ app.get('/articles', (req, res) => {
   const safePage = Math.min(currentPage, totalPages);
   const paginatedArticles = articles.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
-  // 获取所有标签
-  const allTags = [...new Set(
-    getAllArticles()
-      .filter(a => a.tags)
-      .flatMap(a => a.tags)
-  )];
+  // 获取所有标签并按文章数量排序，取前10个热门标签
+  const tagArticleCount = {};
+  getAllArticles().forEach(a => {
+    if (a.tags) a.tags.forEach(t => { tagArticleCount[t] = (tagArticleCount[t] || 0) + 1; });
+  });
+  const allTags = Object.entries(tagArticleCount)
+    .sort((a, b) => b[1] - a[1])
+    .map(([t]) => t);
+  const hotTags = allTags.slice(0, 10);
+  const moreTagCount = allTags.length - hotTags.length;
 
   res.send(`
     <!DOCTYPE html>
@@ -1479,12 +1483,13 @@ app.get('/articles', (req, res) => {
         <div class="max-w-4xl mx-auto">
           <h1 class="text-4xl font-bold mb-8 text-center">${tag ? `标签: ${tag}` : '文章列表'}</h1>
 
-          <!-- 标签云 -->
-          <div class="mb-8 flex flex-wrap gap-2 justify-center">
+          <!-- 标签云（热门标签限10个） -->
+          <div class="mb-8 flex flex-wrap gap-2 justify-center items-center">
             <a href="/articles" class="px-3 py-1 rounded-full text-sm transition-all ${!tag ? 'bg-cyan-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}">全部</a>
-            ${allTags.map(t => `
+            ${hotTags.map(t => `
               <a href="/articles?tag=${encodeURIComponent(t)}" class="px-3 py-1 rounded-full text-sm transition-all ${tag === t ? 'bg-cyan-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}">${t}</a>
             `).join('')}
+            ${moreTagCount > 0 ? `<a href="/tags" class="px-3 py-1 rounded-full text-sm bg-white/5 text-gray-500 hover:bg-white/10 transition-all">+${moreTagCount} 更多</a>` : ''}
           </div>
 
           <div class="space-y-8">
@@ -1498,9 +1503,13 @@ app.get('/articles', (req, res) => {
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     ${article.date}
                   </span>
-                  ${article.tags ? article.tags.map(t => `
-                    <a href="/articles?tag=${encodeURIComponent(t)}" class="px-2 py-0.5 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-400 rounded-full text-xs hover:from-cyan-500/30 hover:to-purple-500/30 transition-all">${t}</a>
-                  `).join('') : ''}
+                  ${article.tags ? (() => {
+                    const visible = article.tags.slice(0, 3);
+                    const extra = article.tags.length - visible.length;
+                    return visible.map(t => `
+                      <a href="/articles?tag=${encodeURIComponent(t)}" class="px-2 py-0.5 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-400 rounded-full text-xs hover:from-cyan-500/30 hover:to-purple-500/30 transition-all">${t}</a>
+                    `).join('') + (extra > 0 ? `<span class="px-2 py-0.5 text-gray-500 text-xs">+${extra}</span>` : '');
+                  })() : ''}
                 </div>
                 <p class="text-gray-300 mb-4">${article.description}</p>
                 <a href="/article/${article.id}" class="text-cyan-400 hover:underline">阅读全文 →</a>
@@ -1851,12 +1860,16 @@ app.get('/tutorials', (req, res) => {
     categories[cat].items.push(t);
   });
 
-  // 获取所有标签
-  const allTags = [...new Set(
-    getAllTutorials()
-      .filter(a => a.tags)
-      .flatMap(a => a.tags)
-  )];
+  // 获取所有标签并按文章数量排序，取前10个热门标签
+  const tagTutorialCount = {};
+  getAllTutorials().forEach(a => {
+    if (a.tags) a.tags.forEach(t => { tagTutorialCount[t] = (tagTutorialCount[t] || 0) + 1; });
+  });
+  const allTags = Object.entries(tagTutorialCount)
+    .sort((a, b) => b[1] - a[1])
+    .map(([t]) => t);
+  const hotTags = allTags.slice(0, 10);
+  const moreTagCount = allTags.length - hotTags.length;
 
   res.send(`
     <!DOCTYPE html>
@@ -1961,12 +1974,13 @@ app.get('/tutorials', (req, res) => {
           <h1 class="text-4xl font-bold mb-4 text-center">${tag ? `标签: ${tag}` : '技术教程'}</h1>
           <p class="text-gray-400 text-center mb-8">${tag ? '查看该标签下的所有教程' : '系统学习 AI 相关技术,从基础到实战'}</p>
 
-          <!-- 标签云 -->
-          <div class="mb-8 flex flex-wrap gap-2 justify-center">
+          <!-- 标签云（热门标签限10个） -->
+          <div class="mb-8 flex flex-wrap gap-2 justify-center items-center">
             <a href="/tutorials" class="px-3 py-1 rounded-full text-sm transition-all ${!tag ? 'bg-cyan-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}">全部</a>
-            ${allTags.map(t => `
+            ${hotTags.map(t => `
               <a href="/tutorials?tag=${encodeURIComponent(t)}" class="px-3 py-1 rounded-full text-sm transition-all ${tag === t ? 'bg-cyan-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}">${t}</a>
             `).join('')}
+            ${moreTagCount > 0 ? `<a href="/tags" class="px-3 py-1 rounded-full text-sm bg-white/5 text-gray-500 hover:bg-white/10 transition-all">+${moreTagCount} 更多</a>` : ''}
           </div>
 
           ${Object.entries(categories).length > 0 ? Object.entries(categories).map(([catKey, cat]) => `
@@ -1990,9 +2004,13 @@ app.get('/tutorials', (req, res) => {
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         ${tutorial.readingTime}分钟
                       </span>` : ''}
-                      ${tutorial.tags ? tutorial.tags.map(t => `
-                        <a href="/tutorials?tag=${encodeURIComponent(t)}" class="px-2 py-0.5 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-400 rounded-full text-xs hover:from-cyan-500/30 hover:to-purple-500/30 transition-all">${t}</a>
-                      `).join('') : ''}
+                      ${tutorial.tags ? (() => {
+                        const visible = tutorial.tags.slice(0, 3);
+                        const extra = tutorial.tags.length - visible.length;
+                        return visible.map(t => `
+                          <a href="/tutorials?tag=${encodeURIComponent(t)}" class="px-2 py-0.5 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-400 rounded-full text-xs hover:from-cyan-500/30 hover:to-purple-500/30 transition-all">${t}</a>
+                        `).join('') + (extra > 0 ? `<span class="px-2 py-0.5 text-gray-500 text-xs">+${extra}</span>` : '');
+                      })() : ''}
                     </div>
                     <p class="text-gray-300 mb-4">${tutorial.description}</p>
                     <a href="/tutorial/${tutorial.id}" class="text-cyan-400 hover:underline">开始学习 →</a>
